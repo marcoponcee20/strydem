@@ -14,7 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      plan_items: {
+        Row: {
+          completed: boolean
+          created_at: string
+          description: string | null
+          id: string
+          intensity: string | null
+          scheduled_date: string
+          sport: string
+          target_distance_km: number | null
+          target_duration_minutes: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          intensity?: string | null
+          scheduled_date: string
+          sport?: string
+          target_distance_km?: number | null
+          target_duration_minutes?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          intensity?: string | null
+          scheduled_date?: string
+          sport?: string
+          target_distance_km?: number | null
+          target_duration_minutes?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          birth_date: string | null
+          created_at: string
+          fitness_level: string | null
+          full_name: string | null
+          gender: string | null
+          height_cm: number | null
+          id: string
+          max_hr: number | null
+          primary_sport: string | null
+          resting_hr: number | null
+          updated_at: string
+          username: string | null
+          weekly_goal_km: number | null
+          weight_kg: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          created_at?: string
+          fitness_level?: string | null
+          full_name?: string | null
+          gender?: string | null
+          height_cm?: number | null
+          id: string
+          max_hr?: number | null
+          primary_sport?: string | null
+          resting_hr?: number | null
+          updated_at?: string
+          username?: string | null
+          weekly_goal_km?: number | null
+          weight_kg?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          birth_date?: string | null
+          created_at?: string
+          fitness_level?: string | null
+          full_name?: string | null
+          gender?: string | null
+          height_cm?: number | null
+          id?: string
+          max_hr?: number | null
+          primary_sport?: string | null
+          resting_hr?: number | null
+          updated_at?: string
+          username?: string | null
+          weekly_goal_km?: number | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      workouts: {
+        Row: {
+          avg_heart_rate: number | null
+          calories: number | null
+          created_at: string
+          distance_km: number | null
+          duration_seconds: number | null
+          elevation_gain_m: number | null
+          id: string
+          max_heart_rate: number | null
+          notes: string | null
+          pace_seconds_per_km: number | null
+          perceived_effort: number | null
+          sport: string
+          title: string | null
+          user_id: string
+          workout_date: string
+        }
+        Insert: {
+          avg_heart_rate?: number | null
+          calories?: number | null
+          created_at?: string
+          distance_km?: number | null
+          duration_seconds?: number | null
+          elevation_gain_m?: number | null
+          id?: string
+          max_heart_rate?: number | null
+          notes?: string | null
+          pace_seconds_per_km?: number | null
+          perceived_effort?: number | null
+          sport?: string
+          title?: string | null
+          user_id: string
+          workout_date?: string
+        }
+        Update: {
+          avg_heart_rate?: number | null
+          calories?: number | null
+          created_at?: string
+          distance_km?: number | null
+          duration_seconds?: number | null
+          elevation_gain_m?: number | null
+          id?: string
+          max_heart_rate?: number | null
+          notes?: string | null
+          pace_seconds_per_km?: number | null
+          perceived_effort?: number | null
+          sport?: string
+          title?: string | null
+          user_id?: string
+          workout_date?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
