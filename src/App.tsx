@@ -11,6 +11,8 @@ import NewWorkout from "./pages/NewWorkout";
 import Plan from "./pages/Plan";
 import Stats from "./pages/Stats";
 import Profile from "./pages/Profile";
+import Coach from "./pages/Coach";
+import Discover from "./pages/Discover";
 import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound.tsx";
