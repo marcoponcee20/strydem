@@ -1,6 +1,6 @@
 {
-  "name": "PULSE — Runners & deportistas",
-  "short_name": "PULSE",
+  "name": "RunMarc — Runners & deportistas",
+  "short_name": "RunMarc",
   "description": "Registra entrenamientos, sigue tu progreso y planifica tu temporada.",
   "start_url": "/",
   "scope": "/",

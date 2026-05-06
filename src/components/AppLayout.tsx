@@ -28,7 +28,7 @@ export default function AppLayout() {
           <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
             <Flame className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-black text-xl tracking-tight">PULSE</span>
+          <span className="font-display font-black text-xl tracking-tight">RunMarc</span>
         </div>
         <nav className="px-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-3 md:pb-0">
           {links.map(({ to, label, icon: Icon, end }) => (
