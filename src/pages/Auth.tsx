@@ -60,7 +60,7 @@ export default function Auth() {
           <div className="h-9 w-9 rounded-xl bg-background/10 backdrop-blur grid place-items-center">
             <Flame className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-black text-xl text-primary-foreground">PULSE</span>
+          <span className="font-display font-black text-xl text-primary-foreground">RunMarc</span>
         </Link>
         <div className="relative h-full flex flex-col justify-center px-12 pb-20">
           <h1 className="text-6xl text-primary-foreground leading-none mb-6">Cada<br/>kilómetro<br/>cuenta.</h1>
@@ -74,7 +74,7 @@ export default function Auth() {
             <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
               <Flame className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-black text-xl">PULSE</span>
+            <span className="font-display font-black text-xl">RunMarc</span>
           </Link>
 
           <div>
