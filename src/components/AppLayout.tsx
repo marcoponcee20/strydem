@@ -1,5 +1,5 @@
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
-import { Activity, BarChart3, Calendar, LayoutDashboard, LogOut, User, Flame } from "lucide-react";
+import { Activity, BarChart3, Calendar, LayoutDashboard, LogOut, User, Flame, Sparkles, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ const links = [
   { to: "/app/workouts", label: "Entrenamientos", icon: Activity },
   { to: "/app/plan", label: "Plan", icon: Calendar },
   { to: "/app/stats", label: "Estadísticas", icon: BarChart3 },
+  { to: "/app/coach", label: "Coach IA", icon: Sparkles },
+  { to: "/app/discover", label: "Descubrir", icon: Search },
   { to: "/app/profile", label: "Perfil", icon: User },
 ];
 

@@ -113,6 +113,44 @@ export type Database = {
         }
         Relationships: []
       }
+      workout_media: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          mime_type: string | null
+          storage_path: string
+          user_id: string
+          workout_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          storage_path: string
+          user_id: string
+          workout_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          storage_path?: string
+          user_id?: string
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_media_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workouts: {
         Row: {
           avg_heart_rate: number | null
@@ -172,7 +210,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_profiles: {
+        Args: { q: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          full_name: string
+          id: string
+          primary_sport: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

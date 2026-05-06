@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Activity } from "lucide-react";
+import { Plus, Trash2, Activity, ChevronDown } from "lucide-react";
 import { formatDuration, formatPace } from "@/lib/sport";
 import { toast } from "sonner";
+import WorkoutMedia from "@/components/WorkoutMedia";
 
 export default function Workouts() {
   const [items, setItems] = useState<any[]>([]);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const load = async () => {
     const { data } = await supabase.from("workouts").select("*").order("workout_date", { ascending: false });
@@ -41,25 +43,38 @@ export default function Workouts() {
         </div>
       ) : (
         <div className="grid gap-3">
-          {items.map((w) => (
-            <div key={w.id} className="bg-surface border border-border rounded-xl p-5 flex flex-wrap items-center gap-4">
-              <div className="h-12 w-12 rounded-lg bg-gradient-primary grid place-items-center shadow-glow shrink-0">
-                <Activity className="h-5 w-5 text-primary-foreground" />
+          {items.map((w) => {
+            const open = openId === w.id;
+            return (
+              <div key={w.id} className="bg-surface border border-border rounded-xl p-5">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-primary grid place-items-center shadow-glow shrink-0">
+                    <Activity className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-[180px]">
+                    <div className="font-semibold">{w.title || `Sesión de ${w.sport}`}</div>
+                    <div className="text-xs text-muted-foreground">{new Date(w.workout_date).toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" })}</div>
+                    {w.notes && <p className="text-sm text-muted-foreground mt-1">{w.notes}</p>}
+                  </div>
+                  <Stat label="Distancia" value={w.distance_km ? `${Number(w.distance_km).toFixed(2)} km` : "—"} />
+                  <Stat label="Tiempo" value={formatDuration(w.duration_seconds)} />
+                  <Stat label="Ritmo" value={formatPace(w.pace_seconds_per_km)} />
+                  <Stat label="FC media" value={w.avg_heart_rate ? `${w.avg_heart_rate} bpm` : "—"} />
+                  <Button variant="ghost" size="icon" onClick={() => setOpenId(open ? null : w.id)} className="text-muted-foreground">
+                    <ChevronDown className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`} />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => remove(w.id)} className="text-muted-foreground hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                {open && (
+                  <div className="mt-5 pt-5 border-t border-border">
+                    <WorkoutMedia workoutId={w.id} />
+                  </div>
+                )}
               </div>
-              <div className="flex-1 min-w-[180px]">
-                <div className="font-semibold">{w.title || `Sesión de ${w.sport}`}</div>
-                <div className="text-xs text-muted-foreground">{new Date(w.workout_date).toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" })}</div>
-                {w.notes && <p className="text-sm text-muted-foreground mt-1">{w.notes}</p>}
-              </div>
-              <Stat label="Distancia" value={w.distance_km ? `${Number(w.distance_km).toFixed(2)} km` : "—"} />
-              <Stat label="Tiempo" value={formatDuration(w.duration_seconds)} />
-              <Stat label="Ritmo" value={formatPace(w.pace_seconds_per_km)} />
-              <Stat label="FC media" value={w.avg_heart_rate ? `${w.avg_heart_rate} bpm` : "—"} />
-              <Button variant="ghost" size="icon" onClick={() => remove(w.id)} className="text-muted-foreground hover:text-destructive">
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
