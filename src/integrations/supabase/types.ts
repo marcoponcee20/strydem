@@ -207,36 +207,20 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          avatar_url: string | null
-          bio: string | null
-          full_name: string | null
-          id: string | null
-          primary_sport: string | null
-          username: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          full_name?: string | null
-          id?: string | null
-          primary_sport?: string | null
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          full_name?: string | null
-          id?: string | null
-          primary_sport?: string | null
-          username?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_profiles: {
+        Args: { q: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          full_name: string
+          id: string
+          primary_sport: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
