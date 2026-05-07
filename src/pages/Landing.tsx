@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { Activity, Calendar, BarChart3, Flame, ArrowRight, Heart, Trophy, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import hero from "@/assets/hero-runner.jpg";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const features = [
   { icon: Activity, title: "Registra cada zancada", desc: "Distancia, ritmo, FC, calorías y desnivel en una sola pantalla." },
@@ -12,7 +14,24 @@ const features = [
 ];
 
 export default function Landing() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const [stats, setStats] = useState<{ athletes: number; total_km: number; total_workouts: number } | null>(null);
+
+  useEffect(() => {
+    supabase.rpc("get_public_stats").then(({ data }) => {
+      if (data?.[0]) setStats({
+        athletes: Number(data[0].athletes) || 0,
+        total_km: Number(data[0].total_km) || 0,
+        total_workouts: Number(data[0].total_workouts) || 0,
+      });
+    });
+  }, []);
+
+  if (!loading && user) return <Navigate to="/app" replace />;
+
+  const fmt = (n: number) => n >= 1000 ? `${(n/1000).toFixed(1)}K` : `${n}`;
+  const fmtKm = (n: number) => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : `${Math.round(n)}`;
+
   return (
     <div className="min-h-screen">
       {/* Nav */}
@@ -21,7 +40,7 @@ export default function Landing() {
           <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
             <Flame className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-black text-xl tracking-tight">RunMarc</span>
+          <span className="font-display font-black text-xl tracking-tight">STRYDE</span>
         </div>
         <Button asChild variant="ghost">
           <Link to={user ? "/app" : "/auth"}>{user ? "Mi panel" : "Entrar"}</Link>
@@ -52,9 +71,9 @@ export default function Landing() {
             </Button>
           </div>
           <div className="flex gap-8 pt-6">
-            <Stat n="50K+" l="atletas" />
-            <Stat n="2.4M" l="km registrados" />
-            <Stat n="4.9★" l="valoración" />
+            <Stat n={stats ? fmt(stats.athletes) : "—"} l="atletas" />
+            <Stat n={stats ? fmtKm(stats.total_km) : "—"} l="km registrados" />
+            <Stat n={stats ? fmt(stats.total_workouts) : "—"} l="entrenos" />
           </div>
         </div>
         <div className="relative animate-slide-up">
@@ -115,7 +134,7 @@ export default function Landing() {
       </section>
 
       <footer className="container mx-auto py-10 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} RunMarc — Hecho con sudor y código.
+        © {new Date().getFullYear()} STRYDE — Hecho con sudor y código.
       </footer>
     </div>
   );

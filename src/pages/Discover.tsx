@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Search, User as UserIcon } from "lucide-react";
@@ -6,8 +7,13 @@ import { Search, User as UserIcon } from "lucide-react";
 export default function Discover() {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!q.trim()) {
+      setResults([]);
+      return;
+    }
     const t = setTimeout(async () => {
       const { data } = await supabase.rpc("search_profiles", { q });
       setResults(data || []);
@@ -34,13 +40,22 @@ export default function Discover() {
       </div>
 
       <div className="grid gap-3">
-        {results.length === 0 && (
+        {!q.trim() && (
           <div className="bg-surface border border-border rounded-2xl p-10 text-center text-muted-foreground">
-            {q ? "Sin resultados" : "Escribe para buscar usuarios"}
+            Escribe el nombre o @usuario de alguien para buscarle
+          </div>
+        )}
+        {q.trim() && results.length === 0 && (
+          <div className="bg-surface border border-border rounded-2xl p-10 text-center text-muted-foreground">
+            Sin resultados para "{q}"
           </div>
         )}
         {results.map((u) => (
-          <div key={u.id} className="bg-surface border border-border rounded-xl p-4 flex items-center gap-4">
+          <button
+            key={u.id}
+            onClick={() => navigate(`/app/u/${u.id}`)}
+            className="bg-surface border border-border rounded-xl p-4 flex items-center gap-4 text-left hover:border-primary/50 transition"
+          >
             {u.avatar_url ? (
               <img src={u.avatar_url} alt={u.full_name ?? "avatar"} className="h-12 w-12 rounded-full object-cover" />
             ) : (
@@ -55,7 +70,7 @@ export default function Discover() {
               </div>
               {u.bio && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{u.bio}</p>}
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

@@ -13,6 +13,7 @@ import Stats from "./pages/Stats";
 import Profile from "./pages/Profile";
 import Coach from "./pages/Coach";
 import Discover from "./pages/Discover";
+import UserProfile from "./pages/UserProfile";
 import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound.tsx";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="stats" element={<Stats />} />
             <Route path="coach" element={<Coach />} />
             <Route path="discover" element={<Discover />} />
+            <Route path="u/:id" element={<UserProfile />} />
             <Route path="profile" element={<Profile />} />
           </Route>
           <Route path="*" element={<NotFound />} />
