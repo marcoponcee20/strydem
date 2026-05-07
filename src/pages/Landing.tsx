@@ -14,7 +14,24 @@ const features = [
 ];
 
 export default function Landing() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const [stats, setStats] = useState<{ athletes: number; total_km: number; total_workouts: number } | null>(null);
+
+  useEffect(() => {
+    supabase.rpc("get_public_stats").then(({ data }) => {
+      if (data?.[0]) setStats({
+        athletes: Number(data[0].athletes) || 0,
+        total_km: Number(data[0].total_km) || 0,
+        total_workouts: Number(data[0].total_workouts) || 0,
+      });
+    });
+  }, []);
+
+  if (!loading && user) return <Navigate to="/app" replace />;
+
+  const fmt = (n: number) => n >= 1000 ? `${(n/1000).toFixed(1)}K` : `${n}`;
+  const fmtKm = (n: number) => n >= 1_000_000 ? `${(n/1_000_000).toFixed(1)}M` : n >= 1000 ? `${(n/1000).toFixed(1)}K` : `${Math.round(n)}`;
+
   return (
     <div className="min-h-screen">
       {/* Nav */}
