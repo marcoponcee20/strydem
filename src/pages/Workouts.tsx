@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Activity, ChevronDown } from "lucide-react";
 import { formatDuration, formatPace } from "@/lib/sport";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 import WorkoutMedia from "@/components/WorkoutMedia";
 
 export default function Workouts() {
@@ -19,7 +20,7 @@ export default function Workouts() {
 
   const remove = async (id: string) => {
     const { error } = await supabase.from("workouts").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     toast.success("Entrenamiento eliminado");
     load();
   };

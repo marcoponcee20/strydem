@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 import { calcAge, calcBMI } from "@/lib/sport";
 import { User } from "lucide-react";
 
@@ -42,7 +43,7 @@ export default function Profile() {
     Object.entries(p).forEach(([k, v]) => { payload[k] = v === "" ? null : v; });
     const { error } = await supabase.from("profiles").upsert(payload);
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     toast.success("Perfil actualizado");
   };
 
