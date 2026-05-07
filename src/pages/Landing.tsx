@@ -21,7 +21,7 @@ export default function Landing() {
           <div className="h-9 w-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow">
             <Flame className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-black text-xl tracking-tight">RunMarc</span>
+          <span className="font-display font-black text-xl tracking-tight">STRYDE</span>
         </div>
         <Button asChild variant="ghost">
           <Link to={user ? "/app" : "/auth"}>{user ? "Mi panel" : "Entrar"}</Link>
@@ -115,7 +115,7 @@ export default function Landing() {
       </section>
 
       <footer className="container mx-auto py-10 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} RunMarc — Hecho con sudor y código.
+        © {new Date().getFullYear()} STRYDE — Hecho con sudor y código.
       </footer>
     </div>
   );
