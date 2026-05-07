@@ -71,9 +71,9 @@ export default function Landing() {
             </Button>
           </div>
           <div className="flex gap-8 pt-6">
-            <Stat n="50K+" l="atletas" />
-            <Stat n="2.4M" l="km registrados" />
-            <Stat n="4.9★" l="valoración" />
+            <Stat n={stats ? fmt(stats.athletes) : "—"} l="atletas" />
+            <Stat n={stats ? fmtKm(stats.total_km) : "—"} l="km registrados" />
+            <Stat n={stats ? fmt(stats.total_workouts) : "—"} l="entrenos" />
           </div>
         </div>
         <div className="relative animate-slide-up">
