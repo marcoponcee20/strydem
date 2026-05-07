@@ -38,6 +38,10 @@ export default function Stats() {
     return Object.entries(sportMap).map(([name, value]) => ({ name: sportLabel(name), value }));
   }, [allItems]);
 
+  const total = items.reduce((s, w) => s + (Number(w.distance_km) || 0), 0);
+  const totalT = items.reduce((s, w) => s + (w.duration_seconds || 0), 0);
+  const colors = ["hsl(14 100% 57%)", "hsl(350 95% 58%)", "hsl(40 95% 55%)", "hsl(145 70% 50%)", "hsl(220 80% 60%)", "hsl(280 70% 60%)", "hsl(180 70% 50%)"];
+
   return (
     <div className="space-y-6">
       <div className="flex items-end justify-between flex-wrap gap-3">
