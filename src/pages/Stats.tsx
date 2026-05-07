@@ -1,13 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, PieChart, Pie, Cell, Legend } from "recharts";
 import { formatDuration } from "@/lib/sport";
+import { sportLabel, hasField, SPORTS } from "@/lib/sportConfig";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Stats() {
-  const [items, setItems] = useState<any[]>([]);
+  const [allItems, setAllItems] = useState<any[]>([]);
+  const [sportFilter, setSportFilter] = useState<string>("all");
   useEffect(() => {
-    supabase.from("workouts").select("*").order("workout_date").then(({ data }) => setItems(data || []));
+    supabase.from("workouts").select("*").order("workout_date").then(({ data }) => setAllItems(data || []));
   }, []);
+
+  const items = useMemo(
+    () => sportFilter === "all" ? allItems : allItems.filter((w) => w.sport === sportFilter),
+    [allItems, sportFilter],
+  );
 
   // Weekly aggregation last 8 weeks
   const weeks: Record<string, number> = {};
