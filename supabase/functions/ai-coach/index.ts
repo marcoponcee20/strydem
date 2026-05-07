@@ -67,14 +67,16 @@ ${context ?? "(sin contexto)"}`;
     }
     if (!resp.ok) {
       const t = await resp.text();
-      return new Response(JSON.stringify({ error: t }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      console.error("AI gateway error:", t);
+      return new Response(JSON.stringify({ error: "Error en el servicio de IA" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(resp.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
+    console.error("ai-coach error:", e);
+    return new Response(JSON.stringify({ error: "Ha ocurrido un error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
