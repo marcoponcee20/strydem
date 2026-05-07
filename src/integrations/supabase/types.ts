@@ -210,6 +210,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_profile: {
+        Args: { profile_id: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          fitness_level: string
+          full_name: string
+          id: string
+          primary_sport: string
+          username: string
+          weekly_goal_km: number
+        }[]
+      }
+      get_public_stats: {
+        Args: never
+        Returns: {
+          athletes: number
+          total_km: number
+          total_workouts: number
+        }[]
+      }
       search_profiles: {
         Args: { q: string }
         Returns: {
