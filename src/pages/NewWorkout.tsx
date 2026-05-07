@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 import { computePace } from "@/lib/sport";
 import { ArrowLeft } from "lucide-react";
 
@@ -61,7 +62,7 @@ export default function NewWorkout() {
       notes: form.notes || null,
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     toast.success("¡Entrenamiento guardado!");
     navigate("/app/workouts");
   };

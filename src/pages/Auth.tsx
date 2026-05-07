@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 import { Flame } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -33,7 +34,7 @@ export default function Auth() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     toast.success("¡Cuenta creada! Bienvenido.");
     navigate("/app");
   };
@@ -43,7 +44,7 @@ export default function Auth() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     navigate("/app");
   };
 

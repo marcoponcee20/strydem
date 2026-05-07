@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Check, Trash2, Calendar as CalIcon } from "lucide-react";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 
 export default function Plan() {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ export default function Plan() {
       target_duration_minutes: form.target_duration_minutes ? Number(form.target_duration_minutes) : null,
       intensity: form.intensity,
     });
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(toUserMessage(error));
     toast.success("Sesión añadida al plan");
     setOpen(false);
     setForm({ ...form, title: "", description: "", target_distance_km: "", target_duration_minutes: "" });
