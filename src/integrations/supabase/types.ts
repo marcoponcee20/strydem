@@ -159,6 +159,7 @@ export type Database = {
           distance_km: number | null
           duration_seconds: number | null
           elevation_gain_m: number | null
+          extras: Json
           id: string
           max_heart_rate: number | null
           notes: string | null
@@ -176,6 +177,7 @@ export type Database = {
           distance_km?: number | null
           duration_seconds?: number | null
           elevation_gain_m?: number | null
+          extras?: Json
           id?: string
           max_heart_rate?: number | null
           notes?: string | null
@@ -193,6 +195,7 @@ export type Database = {
           distance_km?: number | null
           duration_seconds?: number | null
           elevation_gain_m?: number | null
+          extras?: Json
           id?: string
           max_heart_rate?: number | null
           notes?: string | null
