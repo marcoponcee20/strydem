@@ -31,27 +31,33 @@ export default function Stats() {
     km: Number(v.toFixed(1)),
   }));
 
-  // Sport distribution
-  const sportMap: Record<string, number> = {};
-  items.forEach((w) => { sportMap[w.sport] = (sportMap[w.sport] || 0) + 1; });
-  const sportData = Object.entries(sportMap).map(([name, value]) => ({ name, value }));
-  const colors = ["hsl(14 100% 57%)", "hsl(350 95% 58%)", "hsl(40 95% 55%)", "hsl(145 70% 50%)", "hsl(220 80% 60%)"];
-
-  const total = items.reduce((s, w) => s + (Number(w.distance_km) || 0), 0);
-  const totalT = items.reduce((s, w) => s + (w.duration_seconds || 0), 0);
-  const avgPace = items.filter((w) => w.pace_seconds_per_km).reduce((a, w, _, arr) => a + w.pace_seconds_per_km / arr.length, 0);
+  // Sport distribution uses ALL data (independent of filter)
+  const sportData = useMemo(() => {
+    const sportMap: Record<string, number> = {};
+    allItems.forEach((w) => { sportMap[w.sport] = (sportMap[w.sport] || 0) + 1; });
+    return Object.entries(sportMap).map(([name, value]) => ({ name: sportLabel(name), value }));
+  }, [allItems]);
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm text-muted-foreground uppercase tracking-widest">Análisis</p>
-        <h1 className="text-4xl">Estadísticas</h1>
+      <div className="flex items-end justify-between flex-wrap gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground uppercase tracking-widest">Análisis</p>
+          <h1 className="text-4xl">Estadísticas</h1>
+        </div>
+        <Select value={sportFilter} onValueChange={setSportFilter}>
+          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos los deportes</SelectItem>
+            {SPORTS.map((s) => <SelectItem key={s} value={s}>{sportLabel(s)}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4">
-        <Card label="Distancia total" value={`${total.toFixed(1)} km`} />
+        <Card label="Sesiones" value={`${items.length}`} />
         <Card label="Tiempo acumulado" value={formatDuration(totalT)} />
-        <Card label="Ritmo medio" value={avgPace ? `${Math.floor(avgPace / 60)}:${Math.round(avgPace % 60).toString().padStart(2, "0")}/km` : "—"} />
+        <Card label={sportFilter === "natación" ? "Distancia total" : "Distancia total"} value={sportFilter === "natación" ? `${(total * 1000).toFixed(0)} m` : `${total.toFixed(1)} km`} />
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-6">
