@@ -5,8 +5,8 @@ import { Activity, Flame, Trophy, TrendingUp, Plus, Clock, Zap } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { formatDuration } from "@/lib/sport";
-import { sportIcon, sportLabel, formatPrimaryDistance, formatTempo, hasField, SPORT_LABEL } from "@/lib/sportConfig";
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, BarChart, Bar, Cell } from "recharts";
+import { sportIcon, sportLabel, formatPrimaryDistance, formatTempo, hasField } from "@/lib/sportConfig";
+import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface Workout {
   id: string;
