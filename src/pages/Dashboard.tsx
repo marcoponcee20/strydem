@@ -79,7 +79,6 @@ export default function Dashboard() {
 
   // Sport-specific PR
   const longestKm = workouts.reduce((m, w) => Math.max(m, hasField(w.sport, "distance") ? Number(w.distance_km) || 0 : 0), 0);
-  const longestSession = workouts.reduce((m, w) => Math.max(m, w.duration_seconds || 0), 0);
 
   return (
     <div className="space-y-8">
