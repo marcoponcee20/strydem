@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { Activity, Calendar, BarChart3, Flame, ArrowRight, Heart, Trophy, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import hero from "@/assets/hero-runner.jpg";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const features = [
   { icon: Activity, title: "Registra cada zancada", desc: "Distancia, ritmo, FC, calorías y desnivel en una sola pantalla." },
