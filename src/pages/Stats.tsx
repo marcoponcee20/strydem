@@ -59,13 +59,16 @@ export default function Stats() {
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4">
-        <Card label="Sesiones" value={`${items.length}`} />
+        <Card label="Sesiones totales" value={`${items.length}`} />
         <Card label="Tiempo acumulado" value={formatDuration(totalT)} />
-        <Card label={sportFilter === "natación" ? "Distancia total" : "Distancia total"} value={sportFilter === "natación" ? `${(total * 1000).toFixed(0)} m` : `${total.toFixed(1)} km`} />
+        <Card label="Distancia acumulada" value={sportFilter === "natación" ? `${(total * 1000).toFixed(0)} m` : `${total.toFixed(1)} km`} />
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-6">
-        <h3 className="font-display text-xl mb-4">Volumen semanal (km)</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-display text-xl">Volumen semanal (km) — histórico completo</h3>
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground bg-secondary px-2 py-0.5 rounded">datos permanentes</span>
+        </div>
         <div className="h-64">
           <ResponsiveContainer>
             <BarChart data={weekData}>
