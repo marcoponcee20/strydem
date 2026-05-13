@@ -92,7 +92,22 @@ export default function Dashboard() {
         </Button>
       </div>
 
-      {/* Goal ring */}
+      {/* All-time totals - permanent data */}
+      <div className="bg-surface border border-border rounded-2xl p-6 md:p-8">
+        <div className="flex items-center gap-2 mb-5">
+          <Trophy className="h-5 w-5 text-primary" />
+          <h2 className="font-display text-xl">Totales históricos</h2>
+          <span className="text-[10px] uppercase tracking-widest text-muted-foreground bg-secondary px-2 py-0.5 rounded ml-auto">guardado permanentemente</span>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard icon={Activity} label="Entrenos totales" value={workouts.length} />
+          <StatCard icon={Clock} label="Tiempo total" value={formatDuration(totalSec)} />
+          <StatCard icon={TrendingUp} label="Distancia total" value={`${totalKm.toFixed(1)} km`} />
+          <StatCard icon={Zap} label="Racha actual" value={`${streak} ${streak === 1 ? "día" : "días"}`} />
+        </div>
+      </div>
+
+      {/* Weekly goal */}
       <div className="bg-surface border border-border rounded-2xl p-6 md:p-8">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -104,13 +119,6 @@ export default function Dashboard() {
         <div className="h-3 bg-secondary rounded-full overflow-hidden">
           <div className="h-full bg-gradient-primary transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Activity} label="Entrenos" value={workouts.length} />
-        <StatCard icon={Clock} label="Tiempo total" value={formatDuration(totalSec)} />
-        <StatCard icon={Trophy} label="Récord distancia" value={`${longestKm.toFixed(1)} km`} />
-        <StatCard icon={Zap} label="Racha actual" value={`${streak} ${streak === 1 ? "día" : "días"}`} />
       </div>
 
       {/* By-sport breakdown */}
@@ -143,7 +151,7 @@ export default function Dashboard() {
       {chartData.length > 0 && (
         <div className="bg-surface border border-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display text-xl">Distancia — últimos 14</h3>
+            <h3 className="font-display text-xl">Distancia — últimos 14 entrenos</h3>
             <TrendingUp className="h-5 w-5 text-primary" />
           </div>
           <div className="h-56">
@@ -209,7 +217,7 @@ export default function Dashboard() {
 
 function StatCard({ icon: Icon, label, value }: { icon: any; label: string; value: any }) {
   return (
-    <div className="bg-surface border border-border rounded-2xl p-5">
+    <div className="bg-background/40 border border-border rounded-xl p-5">
       <Icon className="h-5 w-5 text-primary mb-3" />
       <div className="text-xs text-muted-foreground uppercase tracking-widest">{label}</div>
       <div className="font-display font-black text-2xl mt-1">{value}</div>
@@ -222,7 +230,6 @@ function calcStreak(dates: string[]): number {
   const set = new Set(dates.map((d) => d.slice(0, 10)));
   let streak = 0;
   const today = new Date();
-  // If no workout today, allow yesterday as the streak head
   let cursor = new Date(today);
   if (!set.has(cursor.toISOString().slice(0, 10))) {
     cursor.setDate(cursor.getDate() - 1);
