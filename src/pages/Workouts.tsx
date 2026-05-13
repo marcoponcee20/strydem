@@ -39,6 +39,7 @@ export default function Workouts() {
         <div>
           <p className="text-sm text-muted-foreground uppercase tracking-widest">Historial</p>
           <h1 className="text-4xl">Entrenamientos</h1>
+          <p className="text-xs text-muted-foreground mt-1">Todos tus datos se guardan permanentemente.</p>
         </div>
         <Button asChild className="bg-gradient-primary text-primary-foreground font-semibold shadow-glow">
           <Link to="/app/workouts/new"><Plus className="mr-2 h-4 w-4" /> Nuevo</Link>

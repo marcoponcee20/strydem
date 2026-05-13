@@ -86,7 +86,7 @@ export default function NewWorkout() {
     });
     setLoading(false);
     if (error) return toast.error(toUserMessage(error));
-    toast.success("¡Entrenamiento guardado!");
+    toast.success("¡Entrenamiento guardado para siempre!");
     navigate("/app/workouts");
   };
 
