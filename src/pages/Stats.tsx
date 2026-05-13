@@ -17,7 +17,7 @@ export default function Stats() {
     [allItems, sportFilter],
   );
 
-  // Weekly aggregation last 8 weeks
+  // Weekly aggregation all history
   const weeks: Record<string, number> = {};
   items.forEach((w) => {
     const d = new Date(w.workout_date);
@@ -26,7 +26,7 @@ export default function Stats() {
     const k = monday.toISOString().slice(0, 10);
     weeks[k] = (weeks[k] || 0) + (Number(w.distance_km) || 0);
   });
-  const weekData = Object.entries(weeks).slice(-8).map(([k, v]) => ({
+  const weekData = Object.entries(weeks).map(([k, v]) => ({
     week: new Date(k).toLocaleDateString("es", { day: "numeric", month: "short" }),
     km: Number(v.toFixed(1)),
   }));
