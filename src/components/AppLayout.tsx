@@ -50,7 +50,7 @@ export default function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="hidden md:block p-3 mt-auto">
+        <div className="p-3 mt-auto">
           <Button variant="ghost" size="sm" onClick={signOut} className="w-full justify-start gap-2 text-muted-foreground">
             <LogOut className="h-4 w-4" /> Cerrar sesión
           </Button>

@@ -53,6 +53,15 @@ export default function Auth() {
     if (result.error) toast.error("No se pudo iniciar con Google");
   };
 
+  const onForgot = async () => {
+    if (!email) return toast.error("Introduce tu email primero");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) return toast.error(toUserMessage(error));
+    toast.success("Te hemos enviado un email para recuperar tu contraseña");
+  };
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:block relative bg-gradient-primary overflow-hidden">
@@ -104,7 +113,12 @@ export default function Auth() {
                   <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Contraseña</Label>
+                    <button type="button" onClick={onForgot} className="text-xs text-primary hover:underline">
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </div>
                   <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full bg-gradient-primary text-primary-foreground font-semibold">
