@@ -221,26 +221,6 @@ export type Database = {
           username: string | null
           weekly_goal_km: number | null
         }
-        Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          fitness_level?: string | null
-          full_name?: string | null
-          id?: string | null
-          primary_sport?: string | null
-          username?: string | null
-          weekly_goal_km?: number | null
-        }
-        Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          fitness_level?: string | null
-          full_name?: string | null
-          id?: string | null
-          primary_sport?: string | null
-          username?: string | null
-          weekly_goal_km?: number | null
-        }
         Relationships: []
       }
       public_stats: {
