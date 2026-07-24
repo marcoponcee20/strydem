@@ -15,7 +15,11 @@ export default function Discover() {
       return;
     }
     const t = setTimeout(async () => {
-      const { data } = await supabase.rpc("search_profiles", { q });
+      const { data } = await supabase
+        .from("public_profiles")
+        .select("*")
+        .or(`full_name.ilike.%${q}%,username.ilike.%${q}%`)
+        .limit(20);
       setResults(data || []);
     }, 250);
     return () => clearTimeout(t);
