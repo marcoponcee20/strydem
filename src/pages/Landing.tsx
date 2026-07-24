@@ -18,11 +18,11 @@ export default function Landing() {
   const [stats, setStats] = useState<{ athletes: number; total_km: number; total_workouts: number } | null>(null);
 
   useEffect(() => {
-    supabase.rpc("get_public_stats").then(({ data }) => {
-      if (data?.[0]) setStats({
-        athletes: Number(data[0].athletes) || 0,
-        total_km: Number(data[0].total_km) || 0,
-        total_workouts: Number(data[0].total_workouts) || 0,
+    supabase.from("public_stats").select("*").maybeSingle().then(({ data }) => {
+      if (data) setStats({
+        athletes: Number(data.athletes) || 0,
+        total_km: Number(data.total_km) || 0,
+        total_workouts: Number(data.total_workouts) || 0,
       });
     });
   }, []);
