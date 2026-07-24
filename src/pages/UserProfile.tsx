@@ -12,8 +12,8 @@ export default function UserProfile() {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data } = await supabase.rpc("get_public_profile", { profile_id: id });
-      setProfile(data?.[0] ?? null);
+      const { data } = await supabase.from("public_profiles").select("*").eq("id", id).maybeSingle();
+      setProfile(data ?? null);
       setLoading(false);
     })();
   }, [id]);
