@@ -38,12 +38,12 @@ export default function WorkoutMedia({ workoutId }: { workoutId: string }) {
       const ext = file.name.split(".").pop();
       const path = `${user.id}/${workoutId}/${crypto.randomUUID()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("workout-media").upload(path, file, { contentType: file.type });
-      if (upErr) { toast.error(upErr.message); continue; }
+      if (upErr) { toast.error(toUserMessage(upErr)); continue; }
       const kind = file.type.startsWith("video") ? "video" : "image";
       const { error: insErr } = await supabase.from("workout_media").insert({
         workout_id: workoutId, user_id: user.id, storage_path: path, mime_type: file.type, kind,
       });
-      if (insErr) toast.error(insErr.message);
+      if (insErr) toast.error(toUserMessage(insErr));
     }
     setUploading(false);
     e.target.value = "";
