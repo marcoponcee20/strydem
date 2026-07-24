@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Image as ImageIcon, Trash2, Upload, Video } from "lucide-react";
 import { toast } from "sonner";
+import { toUserMessage } from "@/lib/errors";
 
 type MediaItem = { id: string; storage_path: string; mime_type: string | null; kind: string; url?: string };
 
