@@ -210,41 +210,50 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          fitness_level: string | null
+          full_name: string | null
+          id: string | null
+          primary_sport: string | null
+          username: string | null
+          weekly_goal_km: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          fitness_level?: string | null
+          full_name?: string | null
+          id?: string | null
+          primary_sport?: string | null
+          username?: string | null
+          weekly_goal_km?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          fitness_level?: string | null
+          full_name?: string | null
+          id?: string | null
+          primary_sport?: string | null
+          username?: string | null
+          weekly_goal_km?: number | null
+        }
+        Relationships: []
+      }
+      public_stats: {
+        Row: {
+          athletes: number | null
+          total_km: number | null
+          total_workouts: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      get_public_profile: {
-        Args: { profile_id: string }
-        Returns: {
-          avatar_url: string
-          bio: string
-          fitness_level: string
-          full_name: string
-          id: string
-          primary_sport: string
-          username: string
-          weekly_goal_km: number
-        }[]
-      }
-      get_public_stats: {
-        Args: never
-        Returns: {
-          athletes: number
-          total_km: number
-          total_workouts: number
-        }[]
-      }
-      search_profiles: {
-        Args: { q: string }
-        Returns: {
-          avatar_url: string
-          bio: string
-          full_name: string
-          id: string
-          primary_sport: string
-          username: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
