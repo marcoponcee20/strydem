@@ -49,6 +49,9 @@ export default function AppLayout() {
               key={to}
               to={to}
               end={end}
+              onMouseEnter={() => { void prefetch[to]?.(); }}
+              onTouchStart={() => { void prefetch[to]?.(); }}
+
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition",
