@@ -1,8 +1,19 @@
 import { NavLink, useNavigate, Outlet } from "react-router-dom";
-import { Activity, BarChart3, Calendar, LayoutDashboard, LogOut, User, Flame, Sparkles, Search } from "lucide-react";
+import { Activity, BarChart3, Calendar, LayoutDashboard, LogOut, User, Flame, Sparkles, Search, Watch } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const prefetch: Record<string, () => Promise<unknown>> = {
+  "/app": () => import("@/pages/Dashboard"),
+  "/app/workouts": () => import("@/pages/Workouts"),
+  "/app/plan": () => import("@/pages/Plan"),
+  "/app/stats": () => import("@/pages/Stats"),
+  "/app/coach": () => import("@/pages/Coach"),
+  "/app/devices": () => import("@/pages/Devices"),
+  "/app/discover": () => import("@/pages/Discover"),
+  "/app/profile": () => import("@/pages/Profile"),
+};
 
 const links = [
   { to: "/app", label: "Resumen", icon: LayoutDashboard, end: true },
@@ -10,9 +21,11 @@ const links = [
   { to: "/app/plan", label: "Plan", icon: Calendar },
   { to: "/app/stats", label: "Estadísticas", icon: BarChart3 },
   { to: "/app/coach", label: "Coach IA", icon: Sparkles },
+  { to: "/app/devices", label: "Mi reloj", icon: Watch },
   { to: "/app/discover", label: "Descubrir", icon: Search },
   { to: "/app/profile", label: "Perfil", icon: User },
 ];
+
 
 export default function AppLayout() {
   const navigate = useNavigate();
