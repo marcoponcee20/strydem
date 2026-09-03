@@ -1,56 +1,47 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Activity, Flame, Trophy, TrendingUp, Plus, Clock, Zap } from "lucide-react";
+import { useMemo } from "react";
+import { useWorkouts, useProfile } from "@/hooks/useWorkouts";
+import { Activity, Flame, Trophy, TrendingUp, Plus, Clock, Zap, HeartPulse, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { formatDuration } from "@/lib/sport";
 import { sportIcon, sportLabel, formatPrimaryDistance, formatTempo, hasField } from "@/lib/sportConfig";
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
-interface Workout {
-  id: string;
-  workout_date: string;
-  title: string | null;
-  sport: string;
-  distance_km: number | null;
-  duration_seconds: number | null;
-  pace_seconds_per_km: number | null;
-  avg_heart_rate: number | null;
-}
+import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
+import ActivityHeatmap from "@/components/ActivityHeatmap";
+import { acwr, buildLoadSeries, calcStreak, formStatus } from "@/lib/analytics";
 
 export default function Dashboard() {
-  const { user } = useAuth();
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [profile, setProfile] = useState<any>(null);
-  const [weeklyGoal, setWeeklyGoal] = useState(20);
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const { data: w } = await supabase.from("workouts").select("*").order("workout_date", { ascending: false }).limit(100);
-      setWorkouts(w || []);
-      const { data: p } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
-      setProfile(p);
-      if (p?.weekly_goal_km) setWeeklyGoal(Number(p.weekly_goal_km));
-    })();
-  }, [user]);
+  const { data: workouts = [], isLoading } = useWorkouts();
+  const { data: profile } = useProfile();
+  const weeklyGoal = Number(profile?.weekly_goal_km) || 20;
 
   const now = new Date();
   const weekStart = new Date(now);
-  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   weekStart.setHours(0, 0, 0, 0);
+  const prevWeekStart = new Date(weekStart);
+  prevWeekStart.setDate(weekStart.getDate() - 7);
 
   const thisWeek = workouts.filter((w) => new Date(w.workout_date) >= weekStart);
-  // Weekly goal in km: only counts sports with distance
-  const weekKm = thisWeek.reduce((s, w) => s + (hasField(w.sport, "distance") ? Number(w.distance_km) || 0 : 0), 0);
-  const totalKm = workouts.reduce((s, w) => s + (hasField(w.sport, "distance") ? Number(w.distance_km) || 0 : 0), 0);
-  const totalSec = workouts.reduce((s, w) => s + (w.duration_seconds || 0), 0);
+  const lastWeek = workouts.filter((w) => new Date(w.workout_date) >= prevWeekStart && new Date(w.workout_date) < weekStart);
 
-  // Streak: consecutive days with at least one workout, ending today or yesterday
+  const km = (list: typeof workouts) => list.reduce((s, w) => s + (hasField(w.sport, "distance") ? Number(w.distance_km) || 0 : 0), 0);
+  const weekKm = km(thisWeek);
+  const lastWeekKm = km(lastWeek);
+  const totalKm = km(workouts);
+  const totalSec = workouts.reduce((s, w) => s + (w.duration_seconds || 0), 0);
+  const trend = lastWeekKm > 0 ? ((weekKm - lastWeekKm) / lastWeekKm) * 100 : null;
+
   const streak = useMemo(() => calcStreak(workouts.map((w) => w.workout_date)), [workouts]);
 
-  // By sport breakdown
+  const series = useMemo(
+    () => buildLoadSeries(workouts, 90, profile?.max_hr, profile?.resting_hr),
+    [workouts, profile?.max_hr, profile?.resting_hr],
+  );
+  const last = series[series.length - 1];
+  const form = formStatus(last?.tsb ?? 0);
+  const ratio = acwr(series);
+
   const bySport = useMemo(() => {
     const map = new Map<string, { count: number; km: number; sec: number }>();
     for (const w of workouts) {
@@ -60,9 +51,7 @@ export default function Dashboard() {
       cur.sec += w.duration_seconds || 0;
       map.set(w.sport, cur);
     }
-    return Array.from(map.entries())
-      .map(([sport, v]) => ({ sport, ...v }))
-      .sort((a, b) => b.count - a.count);
+    return Array.from(map.entries()).map(([sport, v]) => ({ sport, ...v })).sort((a, b) => b.count - a.count);
   }, [workouts]);
 
   const chartData = [...workouts]
@@ -77,8 +66,18 @@ export default function Dashboard() {
   const greeting = profile?.full_name ? `Hola, ${profile.full_name.split(" ")[0]}` : "¡Bienvenido!";
   const progress = Math.min(100, (weekKm / weeklyGoal) * 100);
 
-  // Sport-specific PR
-  const longestKm = workouts.reduce((m, w) => Math.max(m, hasField(w.sport, "distance") ? Number(w.distance_km) || 0 : 0), 0);
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-14 w-72" />
+        <Skeleton className="h-44 w-full rounded-2xl" />
+        <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+      </div>
+    );
+  }
+
+  const toneClass = { good: "text-emerald-400", neutral: "text-primary", warn: "text-amber-400", bad: "text-destructive" }[form.tone];
 
   return (
     <div className="space-y-8">
@@ -92,7 +91,7 @@ export default function Dashboard() {
         </Button>
       </div>
 
-      {/* All-time totals - permanent data */}
+      {/* All-time totals */}
       <div className="bg-surface border border-border rounded-2xl p-6 md:p-8">
         <div className="flex items-center gap-2 mb-5">
           <Trophy className="h-5 w-5 text-primary" />
@@ -107,12 +106,65 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Form / readiness */}
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="bg-surface border border-border rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <HeartPulse className="h-4 w-4 text-primary" />
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">Estado de forma</span>
+            </div>
+            <div className={`font-display font-black text-3xl mt-2 ${toneClass}`}>{form.label}</div>
+            <p className="text-xs text-muted-foreground mt-2">{form.hint}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mt-5 text-center">
+            <Mini label="Fitness" value={last ? last.ctl.toFixed(0) : "0"} />
+            <Mini label="Fatiga" value={last ? last.atl.toFixed(0) : "0"} />
+            <Mini label="Forma" value={last ? (last.tsb > 0 ? `+${last.tsb.toFixed(0)}` : last.tsb.toFixed(0)) : "0"} />
+          </div>
+          {ratio !== null && (
+            <div className="mt-4 text-[11px] text-muted-foreground flex items-center gap-1">
+              <Gauge className="h-3.5 w-3.5" />
+              Ratio carga aguda/crónica: <strong className={ratio > 1.5 ? "text-destructive" : ratio < 0.8 ? "text-amber-400" : "text-emerald-400"}>{ratio}</strong>
+              <span>(óptimo 0,8–1,3)</span>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-surface border border-border rounded-2xl p-6 lg:col-span-2">
+          <h3 className="font-display text-xl mb-4">Carga de entrenamiento — 90 días</h3>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={series}>
+                <defs>
+                  <linearGradient id="ctlGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" fontSize={10} interval={14} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                <Area type="monotone" dataKey="ctl" name="Fitness" stroke="hsl(var(--primary))" fill="url(#ctlGrad)" strokeWidth={2.5} />
+                <Line type="monotone" dataKey="atl" name="Fatiga" stroke="hsl(350 95% 58%)" strokeWidth={2} dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
       {/* Weekly goal */}
       <div className="bg-surface border border-border rounded-2xl p-6 md:p-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-sm text-muted-foreground">Objetivo semanal (running, ciclismo, trail, trekking…)</p>
+            <p className="text-sm text-muted-foreground">Objetivo semanal (deportes con distancia)</p>
             <h2 className="text-3xl">{weekKm.toFixed(1)} <span className="text-muted-foreground text-lg">/ {weeklyGoal} km</span></h2>
+            {trend !== null && (
+              <p className={`text-xs mt-1 ${trend >= 0 ? "text-emerald-400" : "text-amber-400"}`}>
+                {trend >= 0 ? "▲" : "▼"} {Math.abs(trend).toFixed(0)}% respecto a la semana pasada ({lastWeekKm.toFixed(1)} km)
+              </p>
+            )}
           </div>
           <Flame className={`h-10 w-10 ${progress >= 100 ? "text-primary animate-pulse" : "text-muted-foreground"}`} />
         </div>
@@ -121,12 +173,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* By-sport breakdown */}
+      <ActivityHeatmap workouts={workouts} />
+
       {bySport.length > 0 && (
         <div className="bg-surface border border-border rounded-2xl p-6">
           <h3 className="font-display text-xl mb-4">Por deporte</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {bySport.map(({ sport, count, km, sec }) => {
+            {bySport.map(({ sport, count, km: skm, sec }) => {
               const Icon = sportIcon(sport);
               return (
                 <div key={sport} className="bg-background/40 border border-border rounded-xl p-4 flex items-center gap-3">
@@ -137,7 +190,7 @@ export default function Dashboard() {
                     <div className="font-semibold truncate">{sportLabel(sport)}</div>
                     <div className="text-xs text-muted-foreground">
                       {count} {count === 1 ? "sesión" : "sesiones"}
-                      {hasField(sport, "distance") && km > 0 ? ` · ${km.toFixed(1)} km` : ""}
+                      {hasField(sport, "distance") && skm > 0 ? ` · ${skm.toFixed(1)} km` : ""}
                       {sec > 0 ? ` · ${formatDuration(sec)}` : ""}
                     </div>
                   </div>
@@ -225,19 +278,11 @@ function StatCard({ icon: Icon, label, value }: { icon: any; label: string; valu
   );
 }
 
-function calcStreak(dates: string[]): number {
-  if (dates.length === 0) return 0;
-  const set = new Set(dates.map((d) => d.slice(0, 10)));
-  let streak = 0;
-  const today = new Date();
-  let cursor = new Date(today);
-  if (!set.has(cursor.toISOString().slice(0, 10))) {
-    cursor.setDate(cursor.getDate() - 1);
-    if (!set.has(cursor.toISOString().slice(0, 10))) return 0;
-  }
-  while (set.has(cursor.toISOString().slice(0, 10))) {
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
+function Mini({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-background/40 border border-border rounded-lg py-2">
+      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="font-display font-black text-lg">{value}</div>
+    </div>
+  );
 }
