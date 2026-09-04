@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,24 +9,23 @@ import { toast } from "sonner";
 import { toUserMessage } from "@/lib/errors";
 import WorkoutMedia from "@/components/WorkoutMedia";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useInvalidateWorkouts, useWorkouts } from "@/hooks/useWorkouts";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function Workouts() {
-  const [items, setItems] = useState<any[]>([]);
+  const { data: items = [], isLoading } = useWorkouts();
+  const invalidate = useInvalidateWorkouts();
   const [openId, setOpenId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
-
-  const load = async () => {
-    const { data } = await supabase.from("workouts").select("*").order("workout_date", { ascending: false });
-    setItems(data || []);
-  };
-  useEffect(() => { load(); }, []);
 
   const remove = async (id: string) => {
     const { error } = await supabase.from("workouts").delete().eq("id", id);
     if (error) return toast.error(toUserMessage(error));
     toast.success("Entrenamiento eliminado");
-    load();
+    invalidate();
   };
+
 
   const filtered = useMemo(
     () => filter === "all" ? items : items.filter((w) => w.sport === filter),
@@ -58,7 +57,10 @@ export default function Workouts() {
         <span className="text-xs text-muted-foreground ml-2">{filtered.length} {filtered.length === 1 ? "sesión" : "sesiones"}</span>
       </div>
 
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="grid gap-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}</div>
+      ) : filtered.length === 0 ? (
+
         <div className="bg-surface border border-border rounded-2xl p-12 text-center">
           <p className="text-muted-foreground">Sin entrenos para este filtro.</p>
         </div>

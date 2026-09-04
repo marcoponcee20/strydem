@@ -12,11 +12,13 @@ import { toUserMessage } from "@/lib/errors";
 import { computePace } from "@/lib/sport";
 import { ArrowLeft } from "lucide-react";
 import { SPORTS, SPORT_LABEL, hasField, getExtras, sportIcon } from "@/lib/sportConfig";
+import { useInvalidateWorkouts } from "@/hooks/useWorkouts";
 
 export default function NewWorkout() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const invalidate = useInvalidateWorkouts();
   const [form, setForm] = useState({
     sport: "running",
     title: "",
@@ -86,6 +88,7 @@ export default function NewWorkout() {
     });
     setLoading(false);
     if (error) return toast.error(toUserMessage(error));
+    invalidate();
     toast.success("¡Entrenamiento guardado para siempre!");
     navigate("/app/workouts");
   };
