@@ -19,8 +19,9 @@ const Stats = lazy(() => import("./pages/Stats"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Coach = lazy(() => import("./pages/Coach"));
 const Discover = lazy(() => import("./pages/Discover"));
-const Devices = lazy(() => import("./pages/Devices"));
+const Records = lazy(() => import("./pages/Records"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
+
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 const queryClient = new QueryClient({
