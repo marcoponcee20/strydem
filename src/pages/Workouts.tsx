@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, ChevronDown, Filter } from "lucide-react";
+import { Plus, Trash2, ChevronDown, Filter, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { formatDuration } from "@/lib/sport";
 import { sportIcon, sportLabel, formatPrimaryDistance, formatTempo, hasField, getExtras, SPORTS } from "@/lib/sportConfig";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ export default function Workouts() {
   const invalidate = useInvalidateWorkouts();
   const [openId, setOpenId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
+  const [q, setQ] = useState("");
 
   const remove = async (id: string) => {
     const { error } = await supabase.from("workouts").delete().eq("id", id);
@@ -27,10 +29,20 @@ export default function Workouts() {
   };
 
 
-  const filtered = useMemo(
-    () => filter === "all" ? items : items.filter((w) => w.sport === filter),
-    [items, filter],
-  );
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    return items.filter((w) => {
+      if (filter !== "all" && w.sport !== filter) return false;
+      if (!term) return true;
+      return [w.title, w.notes, sportLabel(w.sport), w.workout_date]
+        .some((v) => String(v ?? "").toLowerCase().includes(term));
+    });
+  }, [items, filter, q]);
+
+  const totals = useMemo(() => ({
+    km: filtered.reduce((s, w) => s + (Number(w.distance_km) || 0), 0),
+    seconds: filtered.reduce((s, w) => s + (w.duration_seconds || 0), 0),
+  }), [filtered]);
 
   return (
     <div className="space-y-6">
@@ -54,7 +66,27 @@ export default function Workouts() {
             {SPORTS.map((s) => <SelectItem key={s} value={s}>{sportLabel(s)}</SelectItem>)}
           </SelectContent>
         </Select>
-        <span className="text-xs text-muted-foreground ml-2">{filtered.length} {filtered.length === 1 ? "sesión" : "sesiones"}</span>
+        <div className="relative flex-1 min-w-[180px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar por título, notas o fecha..."
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3 text-xs">
+        <span className="bg-surface border border-border rounded-lg px-3 py-2">
+          <strong className="text-foreground">{filtered.length}</strong> <span className="text-muted-foreground">{filtered.length === 1 ? "sesión" : "sesiones"}</span>
+        </span>
+        <span className="bg-surface border border-border rounded-lg px-3 py-2">
+          <strong className="text-foreground">{totals.km.toFixed(1)}</strong> <span className="text-muted-foreground">km acumulados</span>
+        </span>
+        <span className="bg-surface border border-border rounded-lg px-3 py-2">
+          <strong className="text-foreground">{formatDuration(totals.seconds)}</strong> <span className="text-muted-foreground">de tiempo total</span>
+        </span>
       </div>
 
       {isLoading ? (
