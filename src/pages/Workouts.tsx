@@ -57,7 +57,10 @@ export default function Workouts() {
         <span className="text-xs text-muted-foreground ml-2">{filtered.length} {filtered.length === 1 ? "sesión" : "sesiones"}</span>
       </div>
 
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="grid gap-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}</div>
+      ) : filtered.length === 0 ? (
+
         <div className="bg-surface border border-border rounded-2xl p-12 text-center">
           <p className="text-muted-foreground">Sin entrenos para este filtro.</p>
         </div>
