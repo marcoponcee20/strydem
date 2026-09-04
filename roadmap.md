@@ -9,6 +9,9 @@
 - Dashboard renovado: estado de forma, tendencia semanal, heatmap, skeletons.
 - Eliminada la sección "Mi reloj" (Devices) a petición del usuario.
 
+- Workouts: caché compartida, skeletons, buscador de texto y totales del filtro.
+- NewWorkout invalida la caché al guardar.
+
 ## Pendiente
-- Estadísticas: carga de entrenamiento y comparativas.
-- Workouts: usar caché compartida + edición de sesiones.
+- Estadísticas: comparativas año contra año.
+- Workouts: edición de sesiones existentes.
