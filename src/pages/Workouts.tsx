@@ -11,22 +11,18 @@ import WorkoutMedia from "@/components/WorkoutMedia";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Workouts() {
-  const [items, setItems] = useState<any[]>([]);
+  const { data: items = [], isLoading } = useWorkouts();
+  const invalidate = useInvalidateWorkouts();
   const [openId, setOpenId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
-
-  const load = async () => {
-    const { data } = await supabase.from("workouts").select("*").order("workout_date", { ascending: false });
-    setItems(data || []);
-  };
-  useEffect(() => { load(); }, []);
 
   const remove = async (id: string) => {
     const { error } = await supabase.from("workouts").delete().eq("id", id);
     if (error) return toast.error(toUserMessage(error));
     toast.success("Entrenamiento eliminado");
-    load();
+    invalidate();
   };
+
 
   const filtered = useMemo(
     () => filter === "all" ? items : items.filter((w) => w.sport === filter),
