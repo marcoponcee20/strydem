@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { useWorkouts } from "@/hooks/useWorkouts";
 import { sportLabel } from "@/lib/sportConfig";
-import { Activity, BarChart3, Calendar, LayoutDashboard, Plus, Search, Sparkles, Trophy, User, Watch } from "lucide-react";
+import { Activity, BarChart3, Calendar, LayoutDashboard, Plus, Search, Sparkles, Trophy, User } from "lucide-react";
 
 const NAV = [
   { to: "/app", label: "Resumen", icon: LayoutDashboard },
@@ -13,10 +13,10 @@ const NAV = [
   { to: "/app/plan", label: "Plan", icon: Calendar },
   { to: "/app/stats", label: "Estadísticas", icon: BarChart3 },
   { to: "/app/coach", label: "Coach IA", icon: Sparkles },
-  { to: "/app/devices", label: "Mi reloj", icon: Watch },
   { to: "/app/discover", label: "Descubrir atletas", icon: Search },
   { to: "/app/profile", label: "Perfil", icon: User },
 ];
+
 
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
