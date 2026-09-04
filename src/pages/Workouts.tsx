@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { toUserMessage } from "@/lib/errors";
 import WorkoutMedia from "@/components/WorkoutMedia";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useInvalidateWorkouts, useWorkouts } from "@/hooks/useWorkouts";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function Workouts() {
   const { data: items = [], isLoading } = useWorkouts();
